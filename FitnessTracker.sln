@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36203.30
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.API", "FitnessTracker.API.csproj", "{20400959-3EF9-493F-82E0-B8A88ABE8FD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.API", "src\FitnessTracker.API\FitnessTracker.API.csproj", "{20400959-3EF9-493F-82E0-B8A88ABE8FD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.Core", "..\FitnessTracker.Core\FitnessTracker.Core.csproj", "{510757C5-4BC5-4C61-B2CF-C80F60332300}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.Core", "src\FitnessTracker.Core\FitnessTracker.Core.csproj", "{510757C5-4BC5-4C61-B2CF-C80F60332300}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.Infrastructure", "..\FitnessTracker.Infrastructure\FitnessTracker.Infrastructure.csproj", "{C4D0CF2A-D17D-434B-826D-ECA6310E31C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.Infrastructure", "src\FitnessTracker.Infrastructure\FitnessTracker.Infrastructure.csproj", "{C4D0CF2A-D17D-434B-826D-ECA6310E31C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.Functions", "..\FitnessTracker.Functions\FitnessTracker.Functions.csproj", "{0D9C149C-2C52-4650-9107-D584C59DAF8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.Functions", "src\FitnessTracker.Functions\FitnessTracker.Functions.csproj", "{0D9C149C-2C52-4650-9107-D584C59DAF8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CA41B481-A662-40DC-8654-FF58AF5E5D9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessTracker.Tests", "tests\FitnessTracker.Tests\FitnessTracker.Tests.csproj", "{7BDCF256-ECC9-4805-A9F3-208D903FAAE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,11 +37,18 @@ Global
 		{0D9C149C-2C52-4650-9107-D584C59DAF8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D9C149C-2C52-4650-9107-D584C59DAF8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D9C149C-2C52-4650-9107-D584C59DAF8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BDCF256-ECC9-4805-A9F3-208D903FAAE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BDCF256-ECC9-4805-A9F3-208D903FAAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BDCF256-ECC9-4805-A9F3-208D903FAAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BDCF256-ECC9-4805-A9F3-208D903FAAE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A59CCC56-1D9F-4F0C-94F6-A7BDB244659F}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7BDCF256-ECC9-4805-A9F3-208D903FAAE2} = {CA41B481-A662-40DC-8654-FF58AF5E5D9E}
 	EndGlobalSection
 EndGlobal
