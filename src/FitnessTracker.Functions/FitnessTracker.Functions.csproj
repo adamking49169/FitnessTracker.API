@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../FitnessTracker.Core/FitnessTracker.Core.csproj" />
+    <ProjectReference Include="../FitnessTracker.Infrastructure/FitnessTracker.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
