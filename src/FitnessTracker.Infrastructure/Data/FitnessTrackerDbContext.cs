@@ -22,16 +22,29 @@ namespace FitnessTracker.Infrastructure.Data
 
             modelBuilder.Entity<Plan>(ConfigurePlan);
             modelBuilder.Entity<WorkoutLog>(e =>
-                e.Property(w => w.Date).HasConversion(dateOnlyConverter));
+            {
+                e.Property(w => w.Date).HasConversion(dateOnlyConverter);
+                e.Property(w => w.Weight).HasColumnType("decimal(18,2)");
+            });
             modelBuilder.Entity<WeightLog>(e =>
-                e.Property(w => w.Date).HasConversion(dateOnlyConverter));
+            {
+                e.Property(w => w.Date).HasConversion(dateOnlyConverter);
+                e.Property(w => w.Weight).HasColumnType("decimal(18,2)");
+            });
             modelBuilder.Entity<MealLog>(e =>
-                e.Property(m => m.Date).HasConversion(dateOnlyConverter));
+            {
+                e.Property(m => m.Date).HasConversion(dateOnlyConverter);
+                e.Property(m => m.Protein).HasColumnType("decimal(18,2)");
+                e.Property(m => m.Carbs).HasColumnType("decimal(18,2)");
+                e.Property(m => m.Fats).HasColumnType("decimal(18,2)");
+            });
 
             void ConfigurePlan(EntityTypeBuilder<Plan> builder)
             {
                 builder.Property(p => p.StartDate).HasConversion(dateOnlyConverter);
                 builder.Property(p => p.EndDate).HasConversion(dateOnlyConverter);
+                builder.Property(p => p.StartWeight).HasColumnType("decimal(18,2)");
+                builder.Property(p => p.TargetWeight).HasColumnType("decimal(18,2)");
             }
 
             base.OnModelCreating(modelBuilder);
