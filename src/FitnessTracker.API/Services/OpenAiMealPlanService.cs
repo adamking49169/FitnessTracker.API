@@ -1,4 +1,5 @@
 ﻿using OpenAI;
+using OpenAI.Chat;
 using FitnessTracker.API.Models;
 
 
@@ -18,12 +19,13 @@ public class OpenAiMealPlanService : IOpenAiMealPlanService
         var prompt = $"Generate a balanced meal plan totaling {calories} calories "
                    + "with protein, carbs, and fat breakdown for breakfast, lunch, dinner, "
                    + "and snacks.";
-        var response = await _client.GetCompletionsAsync(
-            deploymentOrModelName: "gpt-35-turbo",
-            new CompletionsOptions { Prompt = { prompt }, MaxTokens = 512 }
-        );
-        var planJson = response.Value.Choices.First().Text.Trim();
+        var chatClient = _client.GetChatClient("gpt-3.5-turbo");
+        ChatCompletionOptions options = new() { MaxOutputTokenCount = 512 };
 
+        ChatCompletion response = await chatClient.CompleteChatAsync(
+            new[] { new UserChatMessage(prompt) },
+            options);
+        var planJson = response.Content[0].Text.Trim();
         return new MealPlan
         {
             Id = Guid.NewGuid(),
