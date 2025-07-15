@@ -1,9 +1,18 @@
 using FitnessTracker.Core.Models;
+using FitnessTracker.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace FitnessTracker.Infrastructure.Services
 {
     public class PlanService : IPlanService
     {
-        public Task<Plan> GeneratePlanAsync(PlanRequest request)
+        private readonly FitnessTrackerDbContext _context;
+        public PlanService(FitnessTrackerDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<Plan> GeneratePlanAsync(PlanRequest request)
         {
             var plan = new Plan
             {
@@ -11,7 +20,9 @@ namespace FitnessTracker.Infrastructure.Services
                 UserId = Guid.Empty,
                 DailyCalorieTarget = request.Calories
             };
-            return Task.FromResult(plan);
+            _context.Plans.Add(plan);
+            await _context.SaveChangesAsync();
+            return plan;
         }
     }
 }
