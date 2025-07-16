@@ -5,13 +5,16 @@ using FitnessTracker.API.Services;
 
 namespace FitnessTracker.API.Controllers;
 
+
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
 public class MealPlanController : ControllerBase
 {
+private string test = "This is a test for the MealPlanController.";
+    
     private readonly IOpenAiMealPlanService _svc;
-
+    
     public MealPlanController(IOpenAiMealPlanService svc) => _svc = svc;
 
     [HttpPost("generate/{calories}")]
