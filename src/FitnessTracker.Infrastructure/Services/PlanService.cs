@@ -24,5 +24,20 @@ namespace FitnessTracker.Infrastructure.Services
             await _context.SaveChangesAsync();
             return plan;
         }
+
+        Task<Plan> IPlanService.GeneratePlanAsync(PlanRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IPlanService.GetPlanForUserAsync(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IPlanService.SavePlanAsync(Plan plan)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

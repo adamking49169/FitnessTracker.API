@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FitnessTracker.Infrastructure
 {
-    internal interface INutritionService
+    public interface INutritionService
     {
     }
 }
