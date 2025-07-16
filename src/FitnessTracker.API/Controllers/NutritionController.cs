@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FitnessTracker.API.Models;
-using FitnessTracker.API.Services;
+using FitnessTracker.Core.Models;
+using FitnessTracker.Infrastructure.Services;
 
 namespace FitnessTracker.API.Controllers;
 
