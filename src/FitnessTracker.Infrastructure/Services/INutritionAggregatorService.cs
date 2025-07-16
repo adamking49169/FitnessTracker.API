@@ -1,6 +1,6 @@
-﻿using FitnessTracker.API.Models;
+﻿using FitnessTracker.Core.Models;
 
-namespace FitnessTracker.API.Services;
+namespace FitnessTracker.Infrastructure.Services;
 
 public interface INutritionAggregatorService
 {

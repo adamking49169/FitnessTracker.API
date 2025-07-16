@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FitnessTracker.API.Models;
+namespace FitnessTracker.Core.Models;
 
 public class FoodEntry
 {
@@ -15,6 +14,4 @@ public class FoodEntry
     public double Fat { get; set; }
     public double Calories { get; set; }
 
-    [ForeignKey(nameof(UserId))]
-    public User? User { get; set; }
 }

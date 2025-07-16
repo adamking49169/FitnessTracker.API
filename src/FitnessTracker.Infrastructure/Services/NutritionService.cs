@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FitnessTracker.Core.Models;        // adjust to your Core models namespace
-using FitnessTracker.API.Services;      // to call the aggregator
-using FitnessTracker.API.Models;
 
 namespace FitnessTracker.Infrastructure.Services
 {

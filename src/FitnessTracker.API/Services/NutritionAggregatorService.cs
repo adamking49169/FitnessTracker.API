@@ -2,7 +2,8 @@
 using Polly.CircuitBreaker;
 using Polly.Retry;
 using System.Net.Http.Json;
-using FitnessTracker.API.Models;
+using FitnessTracker.Core.Models;
+using FitnessTracker.Infrastructure.Services;
 
 namespace FitnessTracker.API.Services;
 
