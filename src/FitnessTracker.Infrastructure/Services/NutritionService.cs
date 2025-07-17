@@ -17,6 +17,8 @@ namespace FitnessTracker.Infrastructure.Services
             => _aggregator.GetMacrosForBarcodeAsync(barcode, userId);
 
         public Task<FoodEntry> CreateManualEntryAsync(double protein, double carbs, double fat, Guid userId)
-            => _aggregator.CreateManualEntryAsync(protein, carbs, fat, userId);
+        {
+            return _aggregator.CreateManualEntryAsync(protein, carbs, fat, userId);
+        }
     }
 }
