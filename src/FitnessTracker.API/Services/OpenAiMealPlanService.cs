@@ -1,6 +1,6 @@
 ﻿using OpenAI;
 using OpenAI.Chat;
-using FitnessTracker.API.Models;
+using FitnessTracker.Core.Models;
 
 
 namespace FitnessTracker.API.Services;

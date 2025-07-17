@@ -15,6 +15,10 @@ namespace FitnessTracker.Infrastructure.Data
         public DbSet<WorkoutLog> WorkoutLogs => Set<WorkoutLog>();
         public DbSet<WeightLog> WeightLogs => Set<WeightLog>();
         public DbSet<MealLog> MealLogs => Set<MealLog>();
+        public DbSet<FoodEntry> FoodEntries => Set<FoodEntry>();
+        public DbSet<WeightEntry> WeightEntries => Set<WeightEntry>();
+        public DbSet<MealPlan> MealPlans => Set<MealPlan>();
+        public DbSet<User> Users => Set<User>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +42,11 @@ namespace FitnessTracker.Infrastructure.Data
                 e.Property(m => m.Carbs).HasColumnType("decimal(18,2)");
                 e.Property(m => m.Fats).HasColumnType("decimal(18,2)");
             });
+
+            modelBuilder.Entity<User>();
+            modelBuilder.Entity<FoodEntry>();
+            modelBuilder.Entity<WeightEntry>();
+            modelBuilder.Entity<MealPlan>();
 
             void ConfigurePlan(EntityTypeBuilder<Plan> builder)
             {

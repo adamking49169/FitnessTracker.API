@@ -2,9 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FitnessTracker.API.Models;
+using FitnessTracker.Core.Models;
 using FitnessTracker.API.Services;
-using FitnessTracker.Core.Models;      // for Plan
 using FitnessTracker.Infrastructure.Services; // for IPlanService
 
 namespace FitnessTracker.API.Controllers

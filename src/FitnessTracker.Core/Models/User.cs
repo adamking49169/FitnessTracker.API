@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FitnessTracker.API.Models;
+namespace FitnessTracker.Core.Models;
 
 public class User
 {
-    [Key]
     public Guid Id { get; set; }
     public string Email { get; set; } = null!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
+
