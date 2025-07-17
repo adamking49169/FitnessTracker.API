@@ -1,9 +1,11 @@
-using FitnessTracker.Infrastructure.Services;
-using FitnessTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Azure.Cosmos;
+using OpenAI;
+using FitnessTracker.API.Data;
+using FitnessTracker.API.Services;
+using FitnessTracker.Infrastructure.Data;
 using FitnessTracker.Infrastructure.Services;
-using FitnessTracker.Infrastructure;      // or the correct namespace for INutritionService
-
+using FitnessTracker.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +15,18 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<FitnessTrackerDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<IPlanService, PlanService>();
-// Infrastructure services
+
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton(new CosmosClient(builder.Configuration["Cosmos:ConnectionString"]));
+builder.Services.AddSingleton(new OpenAIClient(builder.Configuration["OpenAI:Key"]));
+
+builder.Services.AddScoped<ICosmosExerciseService, CosmosExerciseService>();
+builder.Services.AddScoped<INutritionAggregatorService, NutritionAggregatorService>();
+builder.Services.AddScoped<IOpenAiMealPlanService, OpenAiMealPlanService>();
 builder.Services.AddScoped<INutritionService, NutritionService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 

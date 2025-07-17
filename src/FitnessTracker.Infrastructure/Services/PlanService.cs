@@ -17,27 +17,33 @@ namespace FitnessTracker.Infrastructure.Services
             var plan = new Plan
             {
                 PlanId = Guid.NewGuid(),
-                UserId = Guid.Empty,
+                UserId = request.UserId,
                 DailyCalorieTarget = request.Calories
             };
+
             _context.Plans.Add(plan);
             await _context.SaveChangesAsync();
             return plan;
         }
 
-        Task<Plan> IPlanService.GeneratePlanAsync(PlanRequest request)
+        public Task<Plan?> GetPlanForUserAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            return _context.Plans.FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
-        Task IPlanService.GetPlanForUserAsync(Guid userId)
+        public async Task SavePlanAsync(Plan plan)
         {
-            throw new NotImplementedException();
-        }
+            var exists = await _context.Plans.AnyAsync(p => p.PlanId == plan.PlanId);
+            if (exists)
+            {
+                _context.Plans.Update(plan);
+            }
+            else
+            {
+                _context.Plans.Add(plan);
+            }
 
-        Task IPlanService.SavePlanAsync(Plan plan)
-        {
-            throw new NotImplementedException();
+            await _context.SaveChangesAsync();
         }
     }
 }
