@@ -1,4 +1,4 @@
-﻿using FitnessTracker.API.Models;
+﻿using FitnessTracker.Core.Models;
 
 namespace FitnessTracker.API.Services;
 

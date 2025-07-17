@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FitnessTracker.API.Models;
+namespace FitnessTracker.Core.Models;
 
 public class WeightEntry
 {
-    [Key]
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public DateTime Date { get; set; }
@@ -12,3 +9,4 @@ public class WeightEntry
 
     public User? User { get; set; }
 }
+

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FitnessTracker.API.Data;
-using FitnessTracker.API.Models;
+using FitnessTracker.Core.Models;
+using FitnessTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.API.Controllers;
@@ -11,9 +11,9 @@ namespace FitnessTracker.API.Controllers;
 [Authorize]
 public class WeightController : ControllerBase
 {
-    private readonly ApplicationDbContext _db;
+    private readonly FitnessTrackerDbContext _db;
 
-    public WeightController(ApplicationDbContext db) => _db = db;
+    public WeightController(FitnessTrackerDbContext db) => _db = db;
 
     [HttpPost]
     public async Task<ActionResult<WeightEntry>> Post([FromBody] WeightEntry input)

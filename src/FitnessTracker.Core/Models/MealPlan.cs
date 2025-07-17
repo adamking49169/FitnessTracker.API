@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FitnessTracker.API.Models;
+namespace FitnessTracker.Core.Models;
 
 public class MealPlan
 {
-    [Key]
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public DateTime Date { get; set; }
@@ -13,3 +10,4 @@ public class MealPlan
     // Stored as JSON
     public string PlanJson { get; set; } = null!;
 }
+
