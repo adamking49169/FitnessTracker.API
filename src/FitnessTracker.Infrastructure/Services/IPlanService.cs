@@ -5,7 +5,7 @@ namespace FitnessTracker.Infrastructure.Services
     public interface IPlanService
     {
         Task<Plan> GeneratePlanAsync(PlanRequest request);
-        Task GetPlanForUserAsync(Guid userId);
+        Task<Plan?> GetPlanForUserAsync(Guid userId);
         Task SavePlanAsync(Plan plan);
     }
 

@@ -39,8 +39,9 @@ namespace FitnessTracker.API.Controllers
         public async Task<ActionResult<Plan>> GetPlan()
         {
             var userId = Guid.Parse(User.FindFirst("oid")!.Value);
-            await _planService.GetPlanForUserAsync(userId); // This line is incorrect
-            return Ok(); // Placeholder return to avoid compilation error
+            var plan = await _planService.GetPlanForUserAsync(userId);
+            if (plan is null) return NotFound();
+            return Ok(plan);
         }
 
         [HttpPost("plan")]
