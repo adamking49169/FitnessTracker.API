@@ -6,6 +6,9 @@ using FitnessTracker.API.Services;
 using FitnessTracker.Infrastructure.Data;
 using FitnessTracker.Infrastructure.Services;
 using FitnessTracker.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,17 +21,38 @@ builder.Services.AddSwaggerGen();
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<FitnessTrackerDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 
 builder.Services.AddHttpClient();
-builder.Services.AddSingleton(new CosmosClient(builder.Configuration["Cosmos:ConnectionString"]));
-builder.Services.AddSingleton(new OpenAIClient(builder.Configuration["OpenAI:Key"]));
+builder.Services.AddSingleton(new CosmosClient(
+    builder.Configuration["Cosmos:Endpoint"],
+    builder.Configuration["Cosmos:Key"]));
+builder.Services.AddSingleton(new OpenAIClient(builder.Configuration["OpenAI:ApiKey"]));
 
 builder.Services.AddScoped<ICosmosExerciseService, CosmosExerciseService>();
 builder.Services.AddScoped<INutritionAggregatorService, NutritionAggregatorService>();
 builder.Services.AddScoped<IOpenAiMealPlanService, OpenAiMealPlanService>();
 builder.Services.AddScoped<INutritionService, NutritionService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -40,6 +64,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
