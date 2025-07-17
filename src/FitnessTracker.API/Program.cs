@@ -1,3 +1,4 @@
+// Program.cs
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Azure.Cosmos;
 using OpenAI;
@@ -7,67 +8,92 @@ using FitnessTracker.Infrastructure.Data;
 using FitnessTracker.Infrastructure.Services;
 using FitnessTracker.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// 1) Core services
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<FitnessTrackerDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 
+// 2) EF Core (SQL Server)
+builder.Services.AddDbContext<FitnessTrackerDbContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
+// 3) HTTP client
 builder.Services.AddHttpClient();
-builder.Services.AddSingleton(new CosmosClient(
-    builder.Configuration["Cosmos:Endpoint"],
-    builder.Configuration["Cosmos:Key"]));
-builder.Services.AddSingleton(new OpenAIClient(builder.Configuration["OpenAI:ApiKey"]));
 
+// 4) Cosmos DB (single connection-string)
+var cosmosConn = builder.Configuration.GetConnectionString("CosmosDb");
+builder.Services.AddSingleton(_ => new CosmosClient(cosmosConn));
+
+// 5) OpenAI
+builder.Services.AddSingleton(_ =>
+    new OpenAIClient(builder.Configuration["OpenAI:ApiKey"]!));
+
+// 6) Your application services
 builder.Services.AddScoped<ICosmosExerciseService, CosmosExerciseService>();
 builder.Services.AddScoped<INutritionAggregatorService, NutritionAggregatorService>();
 builder.Services.AddScoped<IOpenAiMealPlanService, OpenAiMealPlanService>();
 builder.Services.AddScoped<INutritionService, NutritionService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
 
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+// 7) AuthN/Z
+if (builder.Environment.IsDevelopment())
+{
+    // Dev: allow EVERYTHING, no JWT key needed
+    builder.Services.AddAuthorization(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
-        };
+        options.FallbackPolicy = new AuthorizationPolicyBuilder()
+            .RequireAssertion(_ => true)
+            .Build();
     });
+}
+else
+{
+    // Prod (or Staging): real JWT
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            var cfg = builder.Configuration;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                                              Encoding.UTF8.GetBytes(cfg["Jwt:Key"]!)),
+                ValidateIssuer = true,
+                ValidIssuer = cfg["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = cfg["Jwt:Audience"],
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+        });
 
-builder.Services.AddAuthorization();
+    builder.Services.AddAuthorization();
+}
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 8) Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHttpsRedirection();
+    // **NO** UseAuthentication/UseAuthorization here
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-
-app.UseAuthorization();
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
 
 app.MapControllers();
 
