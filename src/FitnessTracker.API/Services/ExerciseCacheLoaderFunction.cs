@@ -4,7 +4,8 @@ using Microsoft.Extensions.Logging;
 using FitnessTracker.API.Models;
 using FitnessTracker.API.Services;
 using Microsoft.Azure.WebJobs;
-namespace FitnessTracker.API.Services;
+namespace FitnessTracker.Functions;
+
 
 public class ExerciseCacheLoaderFunction
 {

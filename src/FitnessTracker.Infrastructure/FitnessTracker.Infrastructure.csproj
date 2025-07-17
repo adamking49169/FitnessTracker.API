@@ -18,6 +18,10 @@
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.52.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.20">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
@@ -25,12 +29,6 @@
     <ProjectReference Include="../FitnessTracker.Core/FitnessTracker.Core.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.20">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
+	
 	
 </Project>

@@ -7,12 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />
+	  <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../FitnessTracker.Core/FitnessTracker.Core.csproj" />
     <ProjectReference Include="../FitnessTracker.Infrastructure/FitnessTracker.Infrastructure.csproj" />
+	  <ProjectReference Include="../FitnessTracker.API/FitnessTracker.API.csproj" />
   </ItemGroup>
 
 </Project>
