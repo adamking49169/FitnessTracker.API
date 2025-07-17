@@ -1,0 +1,4 @@
+# Ignore the real settings in your API project only
+/FitnessTracker.API/appsettings.json
+# Ignore any secret appsettings in any project
+**/appsettings.json
