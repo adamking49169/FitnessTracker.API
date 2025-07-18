@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using FitnessTracker.Core.Models;
 using FitnessTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
 
 namespace FitnessTracker.API.Controllers;
 
@@ -12,14 +13,24 @@ namespace FitnessTracker.API.Controllers;
 public class WeightController : ControllerBase
 {
     private readonly FitnessTrackerDbContext _db;
+    private readonly IWebHostEnvironment _env;
 
-    public WeightController(FitnessTrackerDbContext db) => _db = db;
+    public WeightController(FitnessTrackerDbContext db, IWebHostEnvironment env)
+    {
+        _db = db;
+        _env = env;
+    }
 
     private bool TryGetUserId(out Guid userId)
     {
         var claim = User.FindFirst("oid");
         if (claim != null && Guid.TryParse(claim.Value, out userId))
         {
+            return true;
+        }
+        if (_env.IsDevelopment())
+        {
+            userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
             return true;
         }
         userId = default;
