@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using FitnessTracker.Core.Models;
 using FitnessTracker.API.Services;
 using FitnessTracker.Infrastructure.Services; // for IPlanService
@@ -15,13 +16,16 @@ namespace FitnessTracker.API.Controllers
     {
         private readonly IOpenAiMealPlanService _mealPlanService;
         private readonly IPlanService _planService;
+        private readonly IWebHostEnvironment _env;
 
         public MealPlanController(
             IOpenAiMealPlanService mealPlanService,
-            IPlanService planService)
+            IPlanService planService,
+            IWebHostEnvironment env)
         {
             _mealPlanService = mealPlanService;
             _planService = planService;
+            _env = env;
         }
 
         private bool TryGetUserId(out Guid userId)
@@ -29,6 +33,11 @@ namespace FitnessTracker.API.Controllers
             var claim = User.FindFirst("oid");
             if (claim != null && Guid.TryParse(claim.Value, out userId))
             {
+                return true;
+            }
+            if (_env.IsDevelopment())
+            {
+                userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
                 return true;
             }
             userId = default;
