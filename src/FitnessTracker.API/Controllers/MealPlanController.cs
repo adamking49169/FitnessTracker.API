@@ -24,11 +24,25 @@ namespace FitnessTracker.API.Controllers
             _planService = planService;
         }
 
+        private bool TryGetUserId(out Guid userId)
+        {
+            var claim = User.FindFirst("oid");
+            if (claim != null && Guid.TryParse(claim.Value, out userId))
+            {
+                return true;
+            }
+            userId = default;
+            return false;
+        }
+
         // from MealPlanController
         [HttpPost("generate/{calories}")]
         public async Task<ActionResult<MealPlan>> Generate(int calories)
         {
-            var userId = Guid.Parse(User.FindFirst("oid")!.Value);
+            if (!TryGetUserId(out var userId))
+            {
+                return Unauthorized();
+            }
             var plan = await _mealPlanService.GenerateDailyMealPlanAsync(calories, userId);
             return Ok(plan);
         }
@@ -37,7 +51,10 @@ namespace FitnessTracker.API.Controllers
         [HttpGet("plan")]
         public async Task<ActionResult<Plan>> GetPlan()
         {
-            var userId = Guid.Parse(User.FindFirst("oid")!.Value);
+            if (!TryGetUserId(out var userId))
+            {
+                return Unauthorized();
+            }
             var plan = await _planService.GetPlanForUserAsync(userId);
             if (plan is null) return NotFound();
             return Ok(plan);
@@ -46,7 +63,11 @@ namespace FitnessTracker.API.Controllers
         [HttpPost("plan")]
         public async Task<IActionResult> SavePlan([FromBody] Plan plan)
         {
-            plan.UserId = Guid.Parse(User.FindFirst("oid")!.Value);
+            if (!TryGetUserId(out var userId))
+            {
+                return Unauthorized();
+            }
+            plan.UserId = userId;
             await _planService.SavePlanAsync(plan);
             return NoContent();
         }

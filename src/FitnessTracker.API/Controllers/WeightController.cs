@@ -15,10 +15,24 @@ public class WeightController : ControllerBase
 
     public WeightController(FitnessTrackerDbContext db) => _db = db;
 
+    private bool TryGetUserId(out Guid userId)
+    {
+        var claim = User.FindFirst("oid");
+        if (claim != null && Guid.TryParse(claim.Value, out userId))
+        {
+            return true;
+        }
+        userId = default;
+        return false;
+    }
+
     [HttpPost]
     public async Task<ActionResult<WeightEntry>> Post([FromBody] WeightEntry input)
     {
-        var userId = Guid.Parse(User.FindFirst("oid")!.Value);
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
         input.Id = Guid.NewGuid();
         input.UserId = userId;
         input.Date = DateTime.UtcNow;
@@ -30,7 +44,10 @@ public class WeightController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<WeightEntry>>> GetAll()
     {
-        var userId = Guid.Parse(User.FindFirst("oid")!.Value);
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
         var list = await _db.WeightEntries
             .Where(w => w.UserId == userId)
             .OrderBy(w => w.Date)
