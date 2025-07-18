@@ -20,19 +20,24 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // 2) EF Core (SQL Server)
+var sqlConn = Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION")
+              ?? builder.Configuration.GetConnectionString("SqlServer");
 builder.Services.AddDbContext<FitnessTrackerDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+    opt.UseSqlServer(sqlConn));
 
 // 3) HTTP client
 builder.Services.AddHttpClient();
 
 // 4) Cosmos DB (single connection-string)
-var cosmosConn = builder.Configuration.GetConnectionString("CosmosDb");
+var cosmosConn = Environment.GetEnvironmentVariable("COSMOS_CONNECTION")
+                 ?? builder.Configuration.GetConnectionString("CosmosDb");
 builder.Services.AddSingleton(_ => new CosmosClient(cosmosConn));
 
 // 5) OpenAI
+var openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
+                ?? builder.Configuration["OpenAI:ApiKey"]!;
 builder.Services.AddSingleton(_ =>
-    new OpenAIClient(builder.Configuration["OpenAI:ApiKey"]!));
+    new OpenAIClient(openAiKey));
 
 // 6) Your application services
 builder.Services.AddScoped<ICosmosExerciseService, CosmosExerciseService>();
@@ -61,15 +66,18 @@ else
         .AddJwtBearer(options =>
         {
             var cfg = builder.Configuration;
+            var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? cfg["Jwt:Key"]!;
+            var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? cfg["Jwt:Issuer"];
+            var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? cfg["Jwt:Audience"];
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
-                                              Encoding.UTF8.GetBytes(cfg["Jwt:Key"]!)),
+                                              Encoding.UTF8.GetBytes(jwtKey)),
                 ValidateIssuer = true,
-                ValidIssuer = cfg["Jwt:Issuer"],
+                ValidIssuer = jwtIssuer,
                 ValidateAudience = true,
-                ValidAudience = cfg["Jwt:Audience"],
+                ValidAudience = jwtAudience,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };
