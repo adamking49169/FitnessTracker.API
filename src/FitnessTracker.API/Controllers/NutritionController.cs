@@ -14,10 +14,24 @@ public class NutritionController : ControllerBase
 
     public NutritionController(INutritionAggregatorService svc) => _svc = svc;
 
+    private bool TryGetUserId(out Guid userId)
+    {
+        var claim = User.FindFirst("oid");
+        if (claim != null && Guid.TryParse(claim.Value, out userId))
+        {
+            return true;
+        }
+        userId = default;
+        return false;
+    }
+
     [HttpGet("barcode/{upc}")]
     public async Task<ActionResult<FoodEntry>> GetByBarcode(string upc)
     {
-        var userId = Guid.Parse(User.FindFirst("oid")!.Value);
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
         var entry = await _svc.GetMacrosForBarcodeAsync(upc, userId);
         return Ok(entry);
     }
@@ -25,7 +39,10 @@ public class NutritionController : ControllerBase
     [HttpPost("manual")]
     public async Task<ActionResult<FoodEntry>> PostManual([FromBody] FoodEntry input)
     {
-        var userId = Guid.Parse(User.FindFirst("oid")!.Value);
+        if (!TryGetUserId(out var userId))
+        {
+            return Unauthorized();
+        }
         var entry = await _svc.CreateManualEntryAsync(input.Protein, input.Carbs, input.Fat, userId);
         return Ok(entry);
     }
