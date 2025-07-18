@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using FitnessTracker.Core.Models;
 using FitnessTracker.Infrastructure.Services;
 
@@ -11,14 +12,24 @@ namespace FitnessTracker.API.Controllers;
 public class NutritionController : ControllerBase
 {
     private readonly INutritionAggregatorService _svc;
+    private readonly IWebHostEnvironment _env;
 
-    public NutritionController(INutritionAggregatorService svc) => _svc = svc;
+    public NutritionController(INutritionAggregatorService svc, IWebHostEnvironment env)
+    {
+        _svc = svc;
+        _env = env;
+    }
 
     private bool TryGetUserId(out Guid userId)
     {
         var claim = User.FindFirst("oid");
         if (claim != null && Guid.TryParse(claim.Value, out userId))
         {
+            return true;
+        }
+        if (_env.IsDevelopment())
+        {
+            userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
             return true;
         }
         userId = default;
