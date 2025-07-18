@@ -2,3 +2,4 @@
 /FitnessTracker.API/appsettings.json
 # Ignore any secret appsettings in any project
 **/appsettings.json
+**/appsettings.Development.json

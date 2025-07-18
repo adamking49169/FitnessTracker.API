@@ -47,9 +47,11 @@ if (builder.Environment.IsDevelopment())
     // Dev: allow EVERYTHING, no JWT key needed
     builder.Services.AddAuthorization(options =>
     {
-        options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        var allowAll = new AuthorizationPolicyBuilder()
             .RequireAssertion(_ => true)
             .Build();
+        options.DefaultPolicy = allowAll;
+        options.FallbackPolicy = allowAll;
     });
 }
 else
