@@ -1,12 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Json;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
+using FitnessTracker.API.Models;
+using FitnessTracker.API.Services;
+using Microsoft.Azure.WebJobs;
 
-namespace FitnessTracker.Functions
+namespace FitnessTracker.Functions;
+
+public class ExerciseCacheLoader
 {
-    internal class ExerciseCacheLoader
+    private readonly ICosmosExerciseService _cosmos;
+    private readonly IHttpClientFactory _http;
+    private readonly ILogger<ExerciseCacheLoader> _logger;
+
+    public ExerciseCacheLoader(
+        ICosmosExerciseService cosmos,
+        IHttpClientFactory http,
+        ILogger<ExerciseCacheLoader> logger)
     {
+        _cosmos = cosmos;
+        _http = http;
+        _logger = logger;
     }
+
+    // Timer triggers every six hours to refresh the exercise cache
+    [Function("ExerciseCacheLoader")]
+    public async Task RunAsync([TimerTrigger("0 0 */6 * * *")] MyInfo timer)
+    {
+        _logger.LogInformation("Fetching exercises at: {Time}", DateTime.UtcNow);
+        var client = _http.CreateClient();
+        var data = await client.GetFromJsonAsync<IEnumerable<ExerciseDocument>>("https://example.com/api/exercises");
+        if (data is not null)
+        {
+            await _cosmos.UpsertExercisesAsync(data);
+            _logger.LogInformation("Upserted {Count} exercises.", data.Count());
+        }
+    }
+
+    public class MyInfo { }
 }
