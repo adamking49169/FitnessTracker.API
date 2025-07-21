@@ -60,7 +60,29 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Views\" />
+	  <ProjectReference Include="..\src\FitnessTracker.API\FitnessTracker.API.csproj" />
+	  <ProjectReference Include="..\src\FitnessTracker.Core\FitnessTracker.Core.csproj" />
+	  <ProjectReference Include="..\src\FitnessTracker.Functions\FitnessTracker.Functions.csproj" />
+	  <ProjectReference Include="..\src\FitnessTracker.Infrastructure\FitnessTracker.Infrastructure.csproj" />
+	  <ProjectReference Include="..\tests\FitnessTracker.Tests\FitnessTracker.Tests.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\LoginPage.xaml.cs">
+	    <DependentUpon>LoginPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\WorkoutsPage.xaml.cs">
+	    <DependentUpon>WorkoutsPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\LoginPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\WorkoutsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>
