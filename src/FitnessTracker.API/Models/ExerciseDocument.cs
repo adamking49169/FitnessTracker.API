@@ -1,5 +1,4 @@
-﻿using Microsoft.Azure.Cosmos.Serialization.HybridRow.Schemas;
-
+﻿
 namespace FitnessTracker.API.Models;
 
 public class ExerciseDocument
