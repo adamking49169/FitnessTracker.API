@@ -16,16 +16,23 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        builder.Services.AddHttpClient<ApiService>(client =>
+        // Read the base API URL from an environment variable when available.
+        var baseUrl = builder.Configuration["API_BASE_URL"];
+
+        if (string.IsNullOrWhiteSpace(baseUrl))
         {
 #if ANDROID
-            // When running on an Android emulator, use the host machine
-            // address `10.0.2.2` to reach the local API running under IIS
-            // Express on https://localhost:44363.
-            client.BaseAddress = new Uri("https://10.0.2.2:44363/");
+            // Use the host loopback address to reach IIS Express when
+            // running on an Android emulator.
+            baseUrl = "https://10.0.2.2:44363/";
 #else
-            client.BaseAddress = new Uri("https://localhost:44363/");
+            baseUrl = "https://localhost:44363/";
 #endif
+        }
+
+        builder.Services.AddHttpClient<ApiService>(client =>
+        {
+            client.BaseAddress = new Uri(baseUrl);
         });
 
         return builder.Build();
