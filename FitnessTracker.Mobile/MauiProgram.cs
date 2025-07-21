@@ -1,4 +1,5 @@
-﻿using FitnessTracker.Mobile.Services;
+using FitnessTracker.Mobile.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FitnessTracker.Mobile;
 
