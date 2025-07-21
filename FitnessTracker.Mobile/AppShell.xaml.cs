@@ -1,10 +1,11 @@
-﻿namespace FitnessTracker.Mobile
+﻿namespace FitnessTracker.Mobile;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+        Routing.RegisterRoute("login", typeof(Views.LoginPage));
+        Routing.RegisterRoute("workouts", typeof(Views.WorkoutsPage));
     }
 }

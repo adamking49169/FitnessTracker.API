@@ -4,11 +4,16 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:FitnessTracker.Mobile"
-    Title="FitnessTracker.Mobile">
+    xmlns:views="clr-namespace:FitnessTracker.Mobile.Views"
+    Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="Login"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="login" />
+    <ShellContent
+        Title="Workouts"
+        ContentTemplate="{DataTemplate views:WorkoutsPage}"
+        Route="workouts" />
 
 </Shell>
