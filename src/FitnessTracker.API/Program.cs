@@ -7,6 +7,7 @@ using FitnessTracker.API.Services;
 using FitnessTracker.Infrastructure.Data;
 using FitnessTracker.Infrastructure.Services;
 using FitnessTracker.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -28,10 +29,14 @@ builder.Services.AddDbContext<FitnessTrackerDbContext>(opt =>
 // 3) HTTP client
 builder.Services.AddHttpClient();
 
-// 4) Cosmos DB (single connection-string)
+// 4) Cosmos DB (optional)
 var cosmosConn = Environment.GetEnvironmentVariable("COSMOS_CONNECTION")
                  ?? builder.Configuration.GetConnectionString("CosmosDb");
-builder.Services.AddSingleton(_ => new CosmosClient(cosmosConn));
+if (!string.IsNullOrWhiteSpace(cosmosConn) && !cosmosConn.Contains("COSMOS_CONNECTION_STRING"))
+{
+    builder.Services.AddSingleton(_ => new CosmosClient(cosmosConn));
+    builder.Services.AddScoped<ICosmosExerciseService, CosmosExerciseService>();
+}
 
 // 5) OpenAI
 var openAiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
@@ -40,7 +45,6 @@ builder.Services.AddSingleton(_ =>
     new OpenAIClient(openAiKey));
 
 // 6) Your application services
-builder.Services.AddScoped<ICosmosExerciseService, CosmosExerciseService>();
 builder.Services.AddScoped<INutritionAggregatorService, NutritionAggregatorService>();
 builder.Services.AddScoped<IOpenAiMealPlanService, OpenAiMealPlanService>();
 builder.Services.AddScoped<INutritionService, NutritionService>();
@@ -87,6 +91,14 @@ else
 }
 
 var app = builder.Build();
+
+// Apply EF Core migrations automatically in development
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<FitnessTrackerDbContext>();
+    db.Database.Migrate();
+}
 
 // 8) Pipeline
 if (app.Environment.IsDevelopment())
