@@ -4,6 +4,7 @@ using FitnessTracker.Core.Models;
 using FitnessTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using FitnessTracker.API.Extensions;
 
 namespace FitnessTracker.API.Controllers;
 
@@ -21,31 +22,17 @@ public class WeightController : ControllerBase
         _env = env;
     }
 
-    private bool TryGetUserId(out Guid userId)
-    {
-        var claim = User.FindFirst("oid");
-        if (claim != null && Guid.TryParse(claim.Value, out userId))
-        {
-            return true;
-        }
-        if (_env.IsDevelopment())
-        {
-            userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
-            return true;
-        }
-        userId = default;
-        return false;
-    }
 
     [HttpPost]
     public async Task<ActionResult<WeightEntry>> Post([FromBody] WeightEntry input)
     {
-        if (!TryGetUserId(out var userId))
+        var userId = User.GetUserId(_env.IsDevelopment());
+        if (userId is null)
         {
             return Unauthorized();
         }
         input.Id = Guid.NewGuid();
-        input.UserId = userId;
+        input.UserId = userId.Value;
         input.Date = DateTime.UtcNow;
         _db.WeightEntries.Add(input);
         await _db.SaveChangesAsync();
@@ -55,12 +42,13 @@ public class WeightController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<WeightEntry>>> GetAll()
     {
-        if (!TryGetUserId(out var userId))
+        var userId = User.GetUserId(_env.IsDevelopment());
+        if (userId is null)
         {
             return Unauthorized();
         }
         var list = await _db.WeightEntries
-            .Where(w => w.UserId == userId)
+            .Where(w => w.UserId == userId.Value)
             .OrderBy(w => w.Date)
             .ToListAsync();
         return Ok(list);

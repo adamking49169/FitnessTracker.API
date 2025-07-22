@@ -68,3 +68,26 @@ Execute the tests with:
 ```
 
 The test project uses xUnit and can be run from the repository root or the `tests` directory.
+
+## Creating Pull Requests via GitHub CLI
+
+For repositories where the [GitHub CLI](https://cli.github.com/) is configured, you can automate opening a pull request using the provided `create-pr.sh` script.
+
+Run the script from the repository root after staging your changes:
+
+```bash
+./create-pr.sh
+```
+
+The script checks out `main`, creates a branch, commits the current working tree and opens a PR that is ready to be merged once any checks pass.
+
+## Running in Docker
+
+Build and run the API in a container using the provided `Dockerfile`:
+
+```bash
+docker build -t fitnesstracker-api .
+docker run -p 8080:80 fitnesstracker-api
+```
+
+Pass any required environment variables (e.g. `SQLSERVER_CONNECTION`) with `-e` flags when starting the container.

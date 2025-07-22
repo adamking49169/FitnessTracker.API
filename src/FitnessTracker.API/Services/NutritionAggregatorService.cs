@@ -28,7 +28,7 @@ public class NutritionAggregatorService : INutritionAggregatorService
     {
         // example: call Nutritionix first, fallback to Edamam
         var client1 = _http.CreateClient();
-        var entry = default(FoodEntry);
+        FoodEntry? entry = null;
 
         try
         {
@@ -39,20 +39,27 @@ public class NutritionAggregatorService : INutritionAggregatorService
                     var url = $"https://api.nutritionix.com/v1_1/item?upc={barcode}"
                               + $"&appId={_cfg["NutritionApis:NutritionixAppId"]}"
                               + $"&appKey={_cfg["NutritionApis:NutritionixAppKey"]}";
-                    var resp = await client1.GetFromJsonAsync<FoodEntry>(url);
-                    if (resp is not null) entry = resp;
+                    var resp = await client1.GetAsync(url);
+                    resp.EnsureSuccessStatusCode();
+                    var apiEntry = await resp.Content.ReadFromJsonAsync<FoodEntry>();
+                    if (apiEntry is not null) entry = apiEntry;
                 }));
         }
         catch
         {
-            // fallback to Edamam
             var client2 = _http.CreateClient();
             var url = $"https://api.edamam.com/api/food-database/v2/parser?upc={barcode}"
                       + $"&app_id={_cfg["NutritionApis:EdamamAppId"]}"
                       + $"&app_key={_cfg["NutritionApis:EdamamAppKey"]}";
-            var resp2 = await client2.GetFromJsonAsync<FoodEntry>(url);
-            entry = resp2!;
+            var resp2 = await client2.GetAsync(url);
+            if (resp2.IsSuccessStatusCode)
+            {
+                entry = await resp2.Content.ReadFromJsonAsync<FoodEntry>();
+            }
         }
+
+        if (entry is null)
+            throw new Exception("Failed to retrieve nutrition info from both services");
 
         entry.Id = Guid.NewGuid();
         entry.UserId = userId;
