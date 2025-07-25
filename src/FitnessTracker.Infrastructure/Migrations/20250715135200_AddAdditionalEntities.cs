@@ -1,4 +1,6 @@
 using System;
+using FitnessTracker.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,6 +8,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FitnessTracker.Infrastructure.Migrations
 {
     /// <inheritdoc />
+    [DbContext(typeof(FitnessTrackerDbContext))]
+    [Migration("20250715135200_AddAdditionalEntities")]
     public partial class AddAdditionalEntities : Migration
     {
         /// <inheritdoc />
