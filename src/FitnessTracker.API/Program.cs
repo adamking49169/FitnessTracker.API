@@ -97,7 +97,7 @@ if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<FitnessTrackerDbContext>();
-    db.Database.Migrate();
+    //db.Database.Migrate();
     await DbSeeder.SeedAsync(db);
 }
 
